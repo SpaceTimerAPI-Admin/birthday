@@ -45,63 +45,7 @@
       gap: 0;
     }
 
-    /* ── CRAWL INTRO ───────────────────────── */
-    #crawl-wrap {
-      position: fixed; inset: 0; z-index: 50;
-      background: var(--deep);
-      display: flex; align-items: flex-end; justify-content: center;
-      overflow: hidden;
-      perspective: 300px;
-    }
-    #crawl-wrap.done { display: none; }
 
-    .crawl-stage {
-      transform-origin: 50% 100%;
-      transform: rotateX(22deg);
-      width: min(560px, 90vw);
-      padding-bottom: 4rem;
-      animation: crawlScroll 14s linear 1.5s forwards;
-      opacity: 0;
-    }
-    @keyframes crawlScroll {
-      0%   { opacity: 1; transform: rotateX(22deg) translateY(0); }
-      100% { opacity: 0; transform: rotateX(22deg) translateY(-220%); }
-    }
-
-    .crawl-logo {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(0.55rem, 1.8vw, 0.9rem);
-      letter-spacing: 0.35em;
-      color: var(--gold);
-      text-align: center;
-      text-transform: uppercase;
-      margin-bottom: 2.5rem;
-      line-height: 2;
-    }
-    .crawl-logo span { display: block; font-size: 2.2em; letter-spacing: 0.12em; color: var(--gold-light); }
-
-    .crawl-body {
-      font-size: clamp(0.9rem, 2.5vw, 1.15rem);
-      line-height: 1.9;
-      color: var(--gold);
-      text-align: justify;
-    }
-
-    .skip-btn {
-      position: fixed; bottom: 1.8rem; right: 1.8rem; z-index: 60;
-      background: transparent;
-      border: 1px solid var(--gold-dim);
-      color: var(--gold-dim);
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .skip-btn:hover { border-color: var(--gold); color: var(--gold); }
-    #crawl-wrap.done ~ .skip-btn { display: none; }
 
     /* ── HEADER ────────────────────────────── */
     .site-header {
@@ -382,26 +326,7 @@
 </head>
 <body>
 
-<!-- STAR CRAWL INTRO -->
-<div id="crawl-wrap">
-  <div class="crawl-stage">
-    <div class="crawl-logo">
-      <span>A Long Time Ago</span>
-      In a galaxy not so far away…
-    </div>
-    <div class="crawl-body">
-      The stars aligned on this day, as they have done once every
-      rotation around the sun — marking the birth of someone whose
-      light outshines entire systems.<br><br>
-      Across the vast expanse of the cosmos, a message has been
-      transmitted — encrypted in starlight, carried on solar winds,
-      and delivered to you at the precise coordinates of midnight.<br><br>
-      <em>Stand by. The transmission will be revealed when the galaxy
-      is ready…</em>
-    </div>
-  </div>
-</div>
-<button class="skip-btn" id="skip-btn" onclick="skipCrawl()">Skip ›</button>
+
 
 <div id="flash-overlay"></div>
 
@@ -572,16 +497,7 @@
     draw();
   })();
 
-  /* ── CRAWL ─────────────────────────────────── */
-  function skipCrawl() {
-    const wrap = document.getElementById('crawl-wrap');
-    const skip = document.getElementById('skip-btn');
-    wrap.classList.add('done');
-    skip.style.display = 'none';
-  }
 
-  // Auto-skip after animation ends (~16s)
-  setTimeout(skipCrawl, 16000);
 
   /* ── PARTICLES ─────────────────────────────── */
   (function () {
