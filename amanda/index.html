@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For Amanda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@300;400;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #f0d080;
+      --gold-dim: #7a6230;
+      --deep: #050810;
+      --mid: #0a0f1e;
+      --text: #d8cbb0;
+      --text-dim: #7a7060;
+      --saber: #4fb3f0;
+    }
+
+    html, body {
+      width: 100%; min-height: 100%;
+      background: var(--deep);
+      color: var(--text);
+      font-family: 'Crimson Pro', Georgia, serif;
+      overflow-x: hidden;
+    }
+
+    /* ── STARS ─────────────────────────────── */
+    #stars-canvas {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── LAYOUT ────────────────────────────── */
+    .scene {
+      position: relative; z-index: 1;
+      min-height: 100dvh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem 1.2rem;
+      gap: 0;
+    }
+
+    /* ── CRAWL INTRO ───────────────────────── */
+    #crawl-wrap {
+      position: fixed; inset: 0; z-index: 50;
+      background: var(--deep);
+      display: flex; align-items: flex-end; justify-content: center;
+      overflow: hidden;
+      perspective: 300px;
+    }
+    #crawl-wrap.done { display: none; }
+
+    .crawl-stage {
+      transform-origin: 50% 100%;
+      transform: rotateX(22deg);
+      width: min(560px, 90vw);
+      padding-bottom: 4rem;
+      animation: crawlScroll 14s linear 1.5s forwards;
+      opacity: 0;
+    }
+    @keyframes crawlScroll {
+      0%   { opacity: 1; transform: rotateX(22deg) translateY(0); }
+      100% { opacity: 0; transform: rotateX(22deg) translateY(-220%); }
+    }
+
+    .crawl-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(0.55rem, 1.8vw, 0.9rem);
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      text-align: center;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+      line-height: 2;
+    }
+    .crawl-logo span { display: block; font-size: 2.2em; letter-spacing: 0.12em; color: var(--gold-light); }
+
+    .crawl-body {
+      font-size: clamp(0.9rem, 2.5vw, 1.15rem);
+      line-height: 1.9;
+      color: var(--gold);
+      text-align: justify;
+    }
+
+    .skip-btn {
+      position: fixed; bottom: 1.8rem; right: 1.8rem; z-index: 60;
+      background: transparent;
+      border: 1px solid var(--gold-dim);
+      color: var(--gold-dim);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .skip-btn:hover { border-color: var(--gold); color: var(--gold); }
+    #crawl-wrap.done ~ .skip-btn { display: none; }
+
+    /* ── HEADER ────────────────────────────── */
+    .site-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.2s forwards;
+    }
+    .site-header .episode-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(0.5rem, 1.5vw, 0.7rem);
+      letter-spacing: 0.4em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .site-header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: clamp(2rem, 6vw, 3.8rem);
+      color: var(--gold-light);
+      letter-spacing: 0.06em;
+      text-shadow: 0 0 40px rgba(201,168,76,0.4), 0 0 80px rgba(201,168,76,0.15);
+      line-height: 1.1;
+    }
+    .site-header .subtitle {
+      font-style: italic;
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: var(--text-dim);
+      margin-top: 0.6rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── DIVIDER ───────────────────────────── */
+    .divider {
+      width: min(320px, 80vw);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+      margin: 0 auto 3rem;
+      opacity: 0;
+      animation: fadeIn 1s ease 0.5s forwards;
+    }
+    .divider-icon {
+      text-align: center;
+      color: var(--gold-dim);
+      font-size: 1.1rem;
+      margin: -0.8rem auto 2.5rem;
+      opacity: 0;
+      animation: fadeIn 1s ease 0.6s forwards;
+    }
+
+    /* ── COUNTDOWN ─────────────────────────── */
+    #countdown-section {
+      text-align: center;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.7s forwards;
+      margin-bottom: 3rem;
+    }
+    .countdown-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(0.5rem, 1.5vw, 0.65rem);
+      letter-spacing: 0.35em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+    .countdown-grid {
+      display: flex; gap: clamp(0.8rem, 2.5vw, 1.8rem);
+      justify-content: center; align-items: flex-start;
+    }
+    .cd-unit {
+      display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+    }
+    .cd-box {
+      position: relative;
+      width: clamp(62px, 16vw, 90px);
+      height: clamp(62px, 16vw, 90px);
+      border: 1px solid var(--gold-dim);
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(201,168,76,0.04);
+    }
+    .cd-box::before, .cd-box::after {
+      content: '';
+      position: absolute;
+      width: 6px; height: 6px;
+      border-color: var(--gold);
+      border-style: solid;
+    }
+    .cd-box::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .cd-box::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+    .cd-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      font-weight: 300;
+      color: var(--gold-light);
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 20px rgba(201,168,76,0.5);
+    }
+    .cd-sep {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      color: var(--gold-dim);
+      padding-top: clamp(12px, 3vw, 18px);
+      line-height: 1;
+    }
+    .cd-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(0.38rem, 1vw, 0.5rem);
+      letter-spacing: 0.25em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+    }
+
+    /* ── LETTER ────────────────────────────── */
+    #letter-section {
+      display: none;
+      width: min(680px, 94vw);
+      margin: 0 auto;
+      opacity: 0;
+      animation: revealLetter 2s ease forwards;
+    }
+    #letter-section.visible { display: block; }
+
+    @keyframes revealLetter {
+      0%   { opacity: 0; transform: translateY(24px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .letter-card {
+      position: relative;
+      background: rgba(10, 15, 30, 0.85);
+      border: 1px solid var(--gold-dim);
+      padding: clamp(2rem, 6vw, 3.5rem) clamp(1.5rem, 5vw, 3rem);
+      backdrop-filter: blur(8px);
+    }
+    .letter-card::before {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border: 1px solid rgba(201,168,76,0.12);
+      pointer-events: none;
+    }
+    /* corner accents */
+    .letter-card .corner {
+      position: absolute;
+      width: 18px; height: 18px;
+      border-color: var(--gold);
+      border-style: solid;
+    }
+    .letter-card .corner.tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .letter-card .corner.tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+    .letter-card .corner.bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+    .letter-card .corner.br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+    .letter-dateline {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(0.45rem, 1.2vw, 0.6rem);
+      letter-spacing: 0.3em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .letter-body {
+      font-size: clamp(1.05rem, 2.8vw, 1.25rem);
+      line-height: 1.9;
+      color: var(--text);
+      font-weight: 300;
+    }
+    .letter-body p { margin-bottom: 1.4em; }
+    .letter-body .salutation {
+      font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+      font-style: italic;
+      color: var(--gold-light);
+      margin-bottom: 1.6em;
+      display: block;
+    }
+    .letter-body .highlight {
+      color: var(--gold-light);
+      font-style: italic;
+    }
+    .letter-body .sign-off {
+      margin-top: 2rem;
+      font-style: italic;
+      color: var(--text-dim);
+      font-size: 1.05em;
+    }
+    .letter-body .sign-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(0.7rem, 2vw, 0.9rem);
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      margin-top: 0.4rem;
+    }
+
+    /* saber line decoration */
+    .saber-line {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--saber), transparent);
+      box-shadow: 0 0 10px rgba(79,179,240,0.3);
+      margin: 2rem 0;
+      opacity: 0.5;
+    }
+
+    /* ── REVEALED FLASH ────────────────────── */
+    #flash-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 100;
+      background: white;
+      animation: flashOut 1s ease forwards;
+    }
+    @keyframes flashOut {
+      0%   { opacity: 0.9; }
+      100% { opacity: 0; }
+    }
+
+    /* ── FOOTER ────────────────────────────── */
+    .site-footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-bottom: 2rem;
+      opacity: 0;
+      animation: fadeIn 1s ease 1s forwards;
+    }
+    .site-footer p {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(0.38rem, 1vw, 0.5rem);
+      letter-spacing: 0.35em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+    }
+
+    /* ── PARTICLES ─────────────────────────── */
+    .particles-wrap {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0;
+      animation: floatParticle linear infinite;
+    }
+
+    /* ── UTILS ─────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes floatParticle {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* birthday mode particles */
+    .confetti-particle {
+      position: fixed;
+      width: 8px; height: 8px;
+      border-radius: 2px;
+      opacity: 0;
+      animation: confettiFall linear forwards;
+      z-index: 200;
+      pointer-events: none;
+    }
+    @keyframes confettiFall {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- STAR CRAWL INTRO -->
+<div id="crawl-wrap">
+  <div class="crawl-stage">
+    <div class="crawl-logo">
+      <span>A Long Time Ago</span>
+      In a galaxy not so far away…
+    </div>
+    <div class="crawl-body">
+      The stars aligned on this day, as they have done once every
+      rotation around the sun — marking the birth of someone whose
+      light outshines entire systems.<br><br>
+      Across the vast expanse of the cosmos, a message has been
+      transmitted — encrypted in starlight, carried on solar winds,
+      and delivered to you at the precise coordinates of midnight.<br><br>
+      <em>Stand by. The transmission will be revealed when the galaxy
+      is ready…</em>
+    </div>
+  </div>
+</div>
+<button class="skip-btn" id="skip-btn" onclick="skipCrawl()">Skip ›</button>
+
+<div id="flash-overlay"></div>
+
+<!-- STARS CANVAS -->
+<canvas id="stars-canvas"></canvas>
+
+<!-- FLOATING PARTICLES -->
+<div class="particles-wrap" id="particles-wrap"></div>
+
+<!-- MAIN -->
+<main class="scene" id="main-scene">
+
+  <header class="site-header">
+    <p class="episode-label">A Galactic Transmission · For You</p>
+    <h1>AMANDA</h1>
+    <p class="subtitle">The Brightest Star in the Galaxy</p>
+  </header>
+
+  <div class="divider"></div>
+  <div class="divider-icon">✦</div>
+
+  <!-- COUNTDOWN -->
+  <section id="countdown-section">
+    <p class="countdown-label">Time Until Your Transmission Arrives</p>
+    <div class="countdown-grid">
+      <div class="cd-unit">
+        <div class="cd-box"><span class="cd-num" id="cd-d">00</span></div>
+        <span class="cd-label">Days</span>
+      </div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit">
+        <div class="cd-box"><span class="cd-num" id="cd-h">00</span></div>
+        <span class="cd-label">Hours</span>
+      </div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit">
+        <div class="cd-box"><span class="cd-num" id="cd-m">00</span></div>
+        <span class="cd-label">Minutes</span>
+      </div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit">
+        <div class="cd-box"><span class="cd-num" id="cd-s">00</span></div>
+        <span class="cd-label">Seconds</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- LETTER (hidden until reveal) -->
+  <section id="letter-section">
+    <article class="letter-card">
+      <div class="corner tl"></div>
+      <div class="corner tr"></div>
+      <div class="corner bl"></div>
+      <div class="corner br"></div>
+
+      <p class="letter-dateline">Stardate · April 16, 2026 · 0000 Hours</p>
+
+      <div class="letter-body">
+        <span class="salutation">Amanda,</span>
+
+        <p>
+          Happy <span class="highlight">28th orbit</span> around the sun. I wanted to take a
+          moment — and do what I do best — and build something just for you.
+          Something that exists in the stars, the way you do.
+        </p>
+
+        <div class="saber-line"></div>
+
+        <p>
+          Even though our journey through this galaxy is still in its early
+          parsecs, I want you to know how grateful I am that you crossed into
+          my atmosphere. You truly are the <span class="highlight">brightest star
+          in my galaxy</span>, and I am forever thankful to have your light
+          beside mine.
+        </p>
+
+        <p>
+          You are so grounded, so real — somehow perfectly <em>down to this
+          earth</em> while still feeling like you belong somewhere among the
+          constellations. Your personality is like no signal I've ever picked
+          up before, and that is exactly why I love you. You make me
+          <span class="highlight">the happiest version of myself</span> whenever
+          I'm in your orbit.
+        </p>
+
+        <p>
+          From the very first transmissions — those early conversations that
+          felt like discovering a new frequency — to every moment we've stepped
+          out into this world together, it has all been a blessing written in
+          the stars. Every single coordinate has led me here, to you.
+        </p>
+
+        <div class="saber-line"></div>
+
+        <p>
+          You deserve the entire universe, Amanda. I am so proud of everything
+          you have built and everything you have overcome. The journey may have
+          had turbulence — every good ship does — but you have navigated it all
+          with a strength that most people never find. Keep pushing through the
+          dark between the stars. You will reach <span class="highlight">every
+          destination you set your course toward</span>. I truly believe that.
+        </p>
+
+        <p class="sign-off">
+          With all the gravity I have —
+          <br>
+          <span class="sign-name">I love you.</span>
+          <br>
+          <span class="sign-name">— Anthony.</span>
+        </p>
+      </div>
+    </article>
+  </section>
+
+  <footer class="site-footer">
+    <p>May the Force be with you · Always</p>
+  </footer>
+
+</main>
+
+<script>
+  /* ── STARS ─────────────────────────────────── */
+  (function () {
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', () => { resize(); buildStars(); });
+
+    function buildStars() {
+      stars = [];
+      const count = Math.floor((canvas.width * canvas.height) / 3000);
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.4 + 0.2,
+          a: Math.random(),
+          da: (Math.random() - 0.5) * 0.006,
+          twinkleSpeed: Math.random() * 0.02 + 0.004
+        });
+      }
+    }
+    buildStars();
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(s => {
+        s.a += s.da;
+        if (s.a <= 0.05 || s.a >= 1) s.da *= -1;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(220, 210, 190, ${s.a})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+
+  /* ── CRAWL ─────────────────────────────────── */
+  function skipCrawl() {
+    const wrap = document.getElementById('crawl-wrap');
+    const skip = document.getElementById('skip-btn');
+    wrap.classList.add('done');
+    skip.style.display = 'none';
+  }
+
+  // Auto-skip after animation ends (~16s)
+  setTimeout(skipCrawl, 16000);
+
+  /* ── PARTICLES ─────────────────────────────── */
+  (function () {
+    const wrap = document.getElementById('particles-wrap');
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = Math.random() * 2 + 1;
+      p.style.cssText = `
+        left: ${Math.random() * 100}%;
+        width: ${size}px; height: ${size}px;
+        animation-duration: ${Math.random() * 18 + 14}s;
+        animation-delay: ${Math.random() * 14}s;
+      `;
+      wrap.appendChild(p);
+    }
+  })();
+
+  /* ── COUNTDOWN ─────────────────────────────── */
+  const TARGET = new Date('2026-04-16T00:00:00');
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const now  = new Date();
+    const diff = TARGET - now;
+
+    if (diff <= 0) {
+      revealLetter();
+      return;
+    }
+
+    const days  = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins  = Math.floor((diff % 3600000)  / 60000);
+    const secs  = Math.floor((diff % 60000)    / 1000);
+
+    document.getElementById('cd-d').textContent = pad(days);
+    document.getElementById('cd-h').textContent = pad(hours);
+    document.getElementById('cd-m').textContent = pad(mins);
+    document.getElementById('cd-s').textContent = pad(secs);
+  }
+
+  function revealLetter() {
+    clearInterval(countdownInterval);
+
+    // flash
+    const flash = document.getElementById('flash-overlay');
+    flash.style.display = 'block';
+    setTimeout(() => { flash.style.display = 'none'; }, 1000);
+
+    // hide countdown, show letter
+    document.getElementById('countdown-section').style.display = 'none';
+    const letter = document.getElementById('letter-section');
+    letter.classList.add('visible');
+    setTimeout(() => { letter.style.opacity = '1'; }, 50);
+
+    // confetti burst
+    launchConfetti();
+  }
+
+  const countdownInterval = setInterval(tick, 1000);
+  tick();
+
+  /* ── CONFETTI ──────────────────────────────── */
+  function launchConfetti() {
+    const colors = ['#c9a84c','#f0d080','#4fb3f0','#ffffff','#7a6230'];
+    for (let i = 0; i < 120; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'confetti-particle';
+        el.style.cssText = `
+          left: ${Math.random() * 100}vw;
+          top: 0;
+          background: ${colors[Math.floor(Math.random() * colors.length)]};
+          animation-duration: ${Math.random() * 3 + 2}s;
+          animation-delay: ${Math.random() * 2}s;
+          width: ${Math.random() * 8 + 4}px;
+          height: ${Math.random() * 8 + 4}px;
+          border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+        `;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 6000);
+      }, Math.random() * 1500);
+    }
+  }
+</script>
+
+</body>
+</html>
